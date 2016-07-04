@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CBModChecker">
+    <output-path>$PROJECT_DIR$/out/artifacts/CBModChecker</output-path>
+    <root id="archive" name="CBModChecker.jar">
+      <element id="module-output" name="CBModerChecker" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+    </root>
+  </artifact>
+</component>
