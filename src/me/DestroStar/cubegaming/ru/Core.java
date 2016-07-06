@@ -3,11 +3,13 @@ package me.DestroStar.cubegaming.ru;
 
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +18,6 @@ import java.util.TimerTask;
  */
 public class Core extends JavaPlugin {
 
-    public User user;
     public static SQLUtil sql;
 
     @Override
@@ -36,7 +37,7 @@ public class Core extends JavaPlugin {
     public void onDisable(){
 
         getLogger().info("ModerCheck System are Disabled");
-        user.pullIntoDB();
+        pullIntoDB();
 
     }
 
@@ -51,9 +52,8 @@ public class Core extends JavaPlugin {
 
             sql.execute("CREATE TABLE IF NOT EXISTS moderchecker (name VARCHAR(16) NOT NULL, time INT DEFAULT 0)");
             ResultSet res = sql.executeQuery("SELECT * FROM moderchecker");
-            if(res != null)
-            {
-                while(res.next()) {
+            if (res != null) {
+                while (res.next()) {
                     User.db_moders.put(res.getString("name"), res.getInt("time"));
 
                 }
@@ -63,6 +63,19 @@ public class Core extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static void pullIntoDB()
+    {
+
+        for(Map.Entry<String, Integer> entry : User.db_moders.entrySet()){
+            String s = entry.getKey();
+            Integer time = entry.getValue();
+            Bukkit.getServer().getLogger().info(s+":"+time);
+            Bukkit.getLogger().info(time + " time");
+            Core.sql.execute("UPDATE moderchecker SET time = ? WHERE name = ?", time,s);
+        }
 
     }
+
+
 }

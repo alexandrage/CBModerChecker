@@ -52,12 +52,13 @@ public class User implements Listener {
 
 		}
 	}
+
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event)
 	{
 		if(isModer(event.getPlayer()))
 		{
-			pullIntoDB();
+			Core.pullIntoDB();
 		}
 	}
 	@EventHandler
@@ -129,17 +130,6 @@ public class User implements Listener {
 		return db_moders.get(moder.getName());
 	}
 
-	public void pullIntoDB()
-	{
 
-		for(Map.Entry<String, Integer> entry : db_moders.entrySet()){
-			String s = entry.getKey();
-			Integer time = entry.getValue();
-			Bukkit.getServer().getLogger().info(s+":"+time);
-			Bukkit.getLogger().info(time + " time");
-			Core.sql.execute("UPDATE moderchecker SET time = ? WHERE name = ?", time,s);
-		}
-
-	}
 
 }
