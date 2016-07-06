@@ -24,6 +24,7 @@ public class Core extends JavaPlugin {
         saveDefaultConfig();
         getLogger().info("ModerCheck System are Enabled");
         PluginManager pm = getServer().getPluginManager();
+
         pm.registerEvents(new User(),this);
         Plugin PEX = this.getServer().getPluginManager().getPlugin("PermissionsEx");
         if (PEX != null) {
@@ -35,6 +36,7 @@ public class Core extends JavaPlugin {
     public void onDisable(){
 
         getLogger().info("ModerCheck System are Disabled");
+        user.pullIntoDB();
 
     }
 
@@ -46,6 +48,7 @@ public class Core extends JavaPlugin {
         try {
             sq.openConnection();
             sql = sq;
+
             sql.execute("CREATE TABLE IF NOT EXISTS moderchecker (name VARCHAR(16) NOT NULL, time INT DEFAULT 0)");
             ResultSet res = sql.executeQuery("SELECT * FROM moderchecker");
             if(res != null)

@@ -23,21 +23,22 @@ import java.util.Map;
 public class User implements Listener {
 
 	public static Map <String, Integer> db_moders = new HashMap<String, Integer>();
-	boolean timerStart,taskRun, playerMove, playerOnline = false;
+	private boolean timerStart, taskRun, playerMove;
 
-		public boolean isModer(Player player)
+	public boolean isModer(Player player)
 	{
 		PermissionUser user = PermissionsEx.getUser(player);
-		for(int i = 0; i < 5; i++ ){
-		PermissionGroup group = user.getGroups()[i];
-		if(group.getName().equalsIgnoreCase("moder")) {
-			return true;
+		for(int i = 0; i < user.getGroups().length; i++ ){
+			PermissionGroup group = user.getGroups()[i];
+			if(group.getName().equalsIgnoreCase("moder")) {
+				return true;
+			}
 		}
-	}
 		return false;
 	}
 
 	@EventHandler
+
 
 	public void onJoin(PlayerJoinEvent event)
 	{
@@ -47,21 +48,19 @@ public class User implements Listener {
 			if(!db_moders.containsKey(moder.getName()))
 			{
 				addModerToDB(moder);
-				playerOnline = true;
 			}
 
 		}
 	}
-@EventHandler
+	@EventHandler
 	public void onLeave(PlayerQuitEvent event)
 	{
 		if(isModer(event.getPlayer()))
 		{
 			pullIntoDB();
-			playerOnline = true;
 		}
 	}
-@EventHandler
+	@EventHandler
 	public void onModerMove(final PlayerMoveEvent event) {
 
 
@@ -71,7 +70,7 @@ public class User implements Listener {
 				taskRun = false;
 			}
 
-			if (!timerStart) {
+			if (!timerStart && event.getPlayer().isOnline()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable() {
 
 					@Override
@@ -83,10 +82,10 @@ public class User implements Listener {
 
 					}
 
-				}, 240);
+				}, 2400);
 				timerStart = true;
 
-			}else return;
+			}
 		}
 	}
 
