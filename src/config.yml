@@ -4,3 +4,4 @@ mysql:
   database: db
   user: user
   pass: pass
+

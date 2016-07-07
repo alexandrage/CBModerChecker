@@ -18,8 +18,16 @@ public class Core extends JavaPlugin {
 
     public static SQLUtil sql;
 
+    private static Core plugin;
+
+    public static Core getPlugin()
+    {
+        return plugin;
+    }
+
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         //сделать конфиг + команды + отправку времени в таблицу.
         saveDefaultConfig();
         getLogger().info("ModerCheck System are Enabled");
@@ -30,22 +38,26 @@ public class Core extends JavaPlugin {
         if (PEX != null) {
             this.getServer().getLogger().info("[ModerCheck] Found PermissionsEx. Will use it for groups!");
         }
+        this.getCommand("modcheck").setExecutor(new CommandManager());
         connect();
     }
 
-    public void onDisable(){
+    public void onDisable()
+    {
 
         getLogger().info("ModerCheck System are Disabled");
         pushIntoDB();
 
     }
 
-    public void connect() {
+    public void connect()
+    {
 
         SQLUtil sq = new SQLUtil(this);
 
 
-        try {
+        try
+        {
             sq.openConnection();
             sql = sq;
 
@@ -59,14 +71,16 @@ public class Core extends JavaPlugin {
                 res.close();
                 SQLUtil.connection.close();
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
     public static void pushIntoDB()
     {
 
-        for(Map.Entry<String, Integer> entry : User.db_moders.entrySet()){
+        for(Map.Entry<String, Integer> entry : User.db_moders.entrySet())
+        {
             String s = entry.getKey();
             Integer time = entry.getValue();
             Bukkit.getServer().getLogger().info(s+":"+time);

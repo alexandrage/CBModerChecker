@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -20,17 +21,21 @@ import java.util.Map;
 /**
  * Created by Дмитрий on 03.07.2016.
  */
-public class User implements Listener {
+public class User implements Listener
+{
 
-	public static Map <String, Integer> db_moders = new HashMap<String, Integer>();
+	public static Map<String, Integer> db_moders = new HashMap<String, Integer>();
 	private boolean timerStart, taskRun, playerMove;
 
 	public boolean isModer(Player player)
 	{
+
 		PermissionUser user = PermissionsEx.getUser(player);
-		for(int i = 0; i < user.getGroups().length; i++ ){
+		for (int i = 0; i < user.getGroups().length; i++)
+		{
 			PermissionGroup group = user.getGroups()[i];
-			if(group.getName().equalsIgnoreCase("moder")) {
+			if (group.getName().equalsIgnoreCase("moder"))
+			{
 				return true;
 			}
 		}
@@ -42,10 +47,12 @@ public class User implements Listener {
 
 	public void onJoin(PlayerJoinEvent event)
 	{
-		if(isModer(event.getPlayer())){
+
+		if (isModer(event.getPlayer()))
+		{
 
 			Player moder = event.getPlayer();
-			if(!db_moders.containsKey(moder.getName()))
+			if (!db_moders.containsKey(moder.getName()))
 			{
 				addModerToDB(moder);
 			}
@@ -56,36 +63,44 @@ public class User implements Listener {
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event)
 	{
-		if(isModer(event.getPlayer()))
+
+		if (isModer(event.getPlayer()))
 		{
+			Core.pushIntoDB();
 		}
 	}
+
 	@EventHandler
-	public void onModerMove(final PlayerMoveEvent event) {
+	public void onModerMove(final PlayerMoveEvent event)
+	{
 
 
-		if (db_moders.containsKey(event.getPlayer().getName())) {
+		if (db_moders.containsKey(event.getPlayer().getName()))
+		{
 			playerMove = true;
-			if(taskRun) {
-				taskRun = false;
-			}
+			if (taskRun) taskRun = false;
+
 			startAfkTimer(event.getPlayer());
-			}
 		}
+	}
 
 
 	private void afkCounter(final Player player)
 	{
+
 		final Player moder = player;
 		taskRun = true;
-		BukkitTask task = new BukkitRunnable() {
+		BukkitTask task = new BukkitRunnable()
+		{
 
 			int i;
 
 			@Override
-			public void run() {
+			public void run()
+			{
 
-				if(playerMove || !player.isOnline() ) {
+				if (playerMove || !player.isOnline())
+				{
 					db_moders.put(moder.getName(), db_moders.get(moder.getName()) + i);
 					Core.pushIntoDB();
 					this.cancel();
@@ -98,14 +113,18 @@ public class User implements Listener {
 		}.runTaskTimer(Bukkit.getPluginManager().getPlugin("CBModChecker"), 20, 20);
 
 	}
-	
-	public void startAfkTimer(final Player player) {
 
-		if (!timerStart && player.isOnline()) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable() {
+	public void startAfkTimer(final Player player)
+	{
+
+		if (!timerStart && player.isOnline())
+		{
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable()
+			{
 
 				@Override
-				public void run() {
+				public void run()
+				{
 
 					playerMove = false;
 					timerStart = false;
@@ -121,21 +140,23 @@ public class User implements Listener {
 
 	public Map<String, Integer> getModersFromDB()
 	{
+
 		return db_moders;
 	}
 
 
 	public void addModerToDB(Player player)
 	{
+
 		Core.sql.execute("INSERT INTO moderchecker (name) VALUES (?)", player.getName());
 		db_moders.put(player.getName(), 0);
 	}
 
 	public int getModerAfkTime(Player moder)
 	{
+
 		return db_moders.get(moder.getName());
 	}
-
 
 
 }

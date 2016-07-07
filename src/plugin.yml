@@ -3,3 +3,5 @@ main: me.DestroStar.cubegaming.ru.Core
 author: DestroStar
 version: 1.0
 
+commands:
+  modcheck:
