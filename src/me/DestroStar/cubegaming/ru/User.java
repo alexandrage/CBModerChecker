@@ -49,7 +49,7 @@ public class User implements Listener {
 			{
 				addModerToDB(moder);
 			}
-
+			startAfkTimer(moder);
 		}
 	}
 
@@ -58,7 +58,6 @@ public class User implements Listener {
 	{
 		if(isModer(event.getPlayer()))
 		{
-			Core.pullIntoDB();
 		}
 	}
 	@EventHandler
@@ -70,27 +69,12 @@ public class User implements Listener {
 			if(taskRun) {
 				taskRun = false;
 			}
-
-			if (!timerStart && event.getPlayer().isOnline()) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable() {
-
-					@Override
-					public void run() {
-						playerMove = false;
-						timerStart = false;
-						startTimer(event.getPlayer());
-						Bukkit.getServer().getLogger().info("120");
-
-					}
-
-				}, 2400);
-				timerStart = true;
-
+			startAfkTimer(event.getPlayer());
 			}
 		}
-	}
 
-	private void startTimer(final Player player)
+
+	private void afkCounter(final Player player)
 	{
 		final Player moder = player;
 		taskRun = true;
@@ -103,6 +87,7 @@ public class User implements Listener {
 
 				if(playerMove || !player.isOnline() ) {
 					db_moders.put(moder.getName(), db_moders.get(moder.getName()) + i);
+					Core.pullIntoDB();
 					this.cancel();
 				}
 				i++;
@@ -113,6 +98,27 @@ public class User implements Listener {
 		}.runTaskTimer(Bukkit.getPluginManager().getPlugin("CBModChecker"), 20, 20);
 
 	}
+	
+	public void startAfkTimer(final Player player) {
+
+		if (!timerStart && player.isOnline()) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable() {
+
+				@Override
+				public void run() {
+
+					playerMove = false;
+					timerStart = false;
+					Bukkit.getServer().getLogger().info("120");
+					afkCounter(player);
+
+				}
+
+			}, 240);
+			timerStart = true;
+		}
+	}
+
 	public Map<String, Integer> getModersFromDB()
 	{
 		return db_moders;
