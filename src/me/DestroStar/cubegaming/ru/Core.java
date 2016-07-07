@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Timer;
@@ -22,6 +23,7 @@ public class Core extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        //сделать конфиг + команды + отправку времени в таблицу.
         saveDefaultConfig();
         getLogger().info("ModerCheck System are Enabled");
         PluginManager pm = getServer().getPluginManager();
@@ -50,7 +52,7 @@ public class Core extends JavaPlugin {
             sq.openConnection();
             sql = sq;
 
-            sql.execute("CREATE TABLE IF NOT EXISTS moderchecker (name VARCHAR(16) NOT NULL, time INT DEFAULT 0)");
+            sql.execute("CREATE TABLE IF NOT EXISTS moderchecker (date DATETIME, name VARCHAR(16) NOT NULL, time INT DEFAULT 0)");
             ResultSet res = sql.executeQuery("SELECT * FROM moderchecker");
             if (res != null) {
                 while (res.next()) {
@@ -72,7 +74,9 @@ public class Core extends JavaPlugin {
             Integer time = entry.getValue();
             Bukkit.getServer().getLogger().info(s+":"+time);
             Bukkit.getLogger().info(time + " time");
-            Core.sql.execute("UPDATE moderchecker SET time = ? WHERE name = ?", time,s);
+            java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
+            Core.sql.execute("UPDATE moderchecker SET time = ?, date = ? WHERE name = ?", time,date,s);
+
         }
 
     }
