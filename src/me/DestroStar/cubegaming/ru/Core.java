@@ -8,11 +8,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Дмитрий on 03.07.2016.
@@ -39,7 +36,7 @@ public class Core extends JavaPlugin {
     public void onDisable(){
 
         getLogger().info("ModerCheck System are Disabled");
-        pullIntoDB();
+        pushIntoDB();
 
     }
 
@@ -66,7 +63,7 @@ public class Core extends JavaPlugin {
             e.printStackTrace();
         }
     }
-    public static void pullIntoDB()
+    public static void pushIntoDB()
     {
 
         for(Map.Entry<String, Integer> entry : User.db_moders.entrySet()){

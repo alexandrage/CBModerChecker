@@ -87,7 +87,7 @@ public class User implements Listener {
 
 				if(playerMove || !player.isOnline() ) {
 					db_moders.put(moder.getName(), db_moders.get(moder.getName()) + i);
-					Core.pullIntoDB();
+					Core.pushIntoDB();
 					this.cancel();
 				}
 				i++;
