@@ -25,7 +25,9 @@ public class User implements Listener
 {
 
 	public static Map<String, Integer> db_moders = new HashMap<String, Integer>();
-	private boolean timerStart, taskRun, playerMove;
+	public static Map<String, Boolean> moveStatus = new HashMap<String, Boolean>();
+	public static Map<String, Boolean> timerStatus = new HashMap<String, Boolean>();
+	public static Map<String, Boolean> taskStatus = new HashMap<String, Boolean>();
 
 	public boolean isModer(Player player)
 	{
@@ -77,8 +79,10 @@ public class User implements Listener
 
 		if (db_moders.containsKey(event.getPlayer().getName()))
 		{
-			playerMove = true;
-			if (taskRun) taskRun = false;
+			Player moder = event.getPlayer();
+			moveStatus.put(moder.getName(),true);
+
+				taskStatus.put(moder.getName(), false);
 
 			startAfkTimer(event.getPlayer());
 		}
@@ -89,7 +93,7 @@ public class User implements Listener
 	{
 
 		final Player moder = player;
-		taskRun = true;
+		taskStatus.put(moder.getName(), true);
 		BukkitTask task = new BukkitRunnable()
 		{
 
@@ -99,7 +103,7 @@ public class User implements Listener
 			public void run()
 			{
 
-				if (playerMove || !player.isOnline())
+				if (moveStatus.get(moder.getName()) == true || !player.isOnline())
 				{
 					db_moders.put(moder.getName(), db_moders.get(moder.getName()) + i);
 					Core.pushIntoDB();
@@ -117,7 +121,11 @@ public class User implements Listener
 	public void startAfkTimer(final Player player)
 	{
 
-		if (!timerStart && player.isOnline())
+		if (!timerStatus.containsKey(player.getName()))
+		{
+			timerStatus.put(player.getName(), false);
+		}
+		if (timerStatus.get(player.getName()) == false && player.isOnline())
 		{
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CBModChecker"), new Runnable()
 			{
@@ -126,15 +134,14 @@ public class User implements Listener
 				public void run()
 				{
 
-					playerMove = false;
-					timerStart = false;
-					Bukkit.getServer().getLogger().info("120");
+					moveStatus.put(player.getName(), false);
+					timerStatus.put(player.getName(), false);
 					afkCounter(player);
 
 				}
 
 			}, 240);
-			timerStart = true;
+			timerStatus.put(player.getName(), true);
 		}
 	}
 

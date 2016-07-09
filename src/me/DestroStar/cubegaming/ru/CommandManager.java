@@ -56,6 +56,10 @@ public class CommandManager implements CommandExecutor
 
 				}
 			}
+			if(label.equalsIgnoreCase("afk"))
+			{
+
+			}
 		}
 		return false;
 	}
